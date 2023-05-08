@@ -9,6 +9,7 @@ from random import sample
 import webbrowser
 from threading import Thread
 import json
+from copy import deepcopy
 
 from modules.fuzzylogics import FuzzyLogics
 from modules.apiexception import APIException
@@ -24,6 +25,8 @@ class Window(QMainWindow):
 
 		self.setWindowTitle("Spotify recommender")
 		self.setMinimumSize(700, 500)
+		self.setWindowIcon(QIcon("resources/music.png"))
+
 		self.suggestions = []
 		self.playlistData = {"songs": [], "features": None}
 		self.songsID = {}
@@ -118,7 +121,15 @@ class Window(QMainWindow):
 		self.widget.setLayout(layout)
 
 	def updateMessage(self, title, message):
-		QMessageBox.about(self, title, message)
+		messageBox = QMessageBox()
+		messageBox.setWindowTitle(title)
+		messageBox.setText(message)
+
+		if(title == "Success"):
+			messageBox.setWindowIcon(QIcon("resources/check.png"))
+		else:
+			messageBox.setWindowIcon(QIcon("resources/error.png"))
+		messageBox.exec_()
 
 	def updateTable(self):
 		for i, j in enumerate(self.suggestions):
@@ -192,22 +203,28 @@ class Window(QMainWindow):
 			# Get fuzzy recommendation
 			self.fuzzyRecommendation.setDataset(self.spotifySuggestions["features"])
 			fuzzySuggestion = self.fuzzyRecommendation.recommend(self.playlistData["features"])
+			fuzzySuggestionSet = set(fuzzySuggestion)
 
 			# Get AI recommendation
-			AISuggestion = self.networkRecommendation.predict(self.playlistAverages, self.spotifySuggestions["features"], 10)
+			AISuggestion, resultsTogether = self.networkRecommendation.predict(self.playlistAverages, self.playlistStd, self.spotifySuggestions["features"], 10)
 			AISuggestionSet = set(AISuggestion)
 			fuzzySuggestionProcessed = []
 
-			for i in fuzzySuggestion:
-				if i not in AISuggestionSet:
-					fuzzySuggestionProcessed.append(i)
+			for i in resultsTogether:
+				if i[1] in fuzzySuggestionSet:
+					fuzzySuggestionProcessed.append(i[1])
+
+				if len(fuzzySuggestionProcessed) == 5:
+					break
 
 			fullSuggestion = []
 
-			numberFromFuzzy = int((len(fuzzySuggestionProcessed)+19)/20)
+			numberFromFuzzy = len(fuzzySuggestionProcessed)
 
-			fullSuggestion.extend(sample(fuzzySuggestionProcessed, numberFromFuzzy))
-			fullSuggestion.extend(sample(AISuggestion, 10-numberFromFuzzy))
+			fullSuggestion.extend(fuzzySuggestionProcessed)
+			
+			AISuggestionCopy = [i for i in deepcopy(AISuggestion[0:10]) if i not in fullSuggestion]
+			fullSuggestion.extend(AISuggestionCopy[:10-numberFromFuzzy])
 
 			for i in fullSuggestion:
 				song = self.spotifySuggestions["songs"][i]
@@ -247,6 +264,7 @@ class Window(QMainWindow):
 		df2 = df.iloc[len(playlistData):, :]
 
 		self.playlistAverages = df1.mean().to_dict()
+		self.playlistStd = df1.std().to_dict()
 
 		self.playlistData["features"] = df1.to_dict('records')
 		self.spotifySuggestions["features"] = df2.to_dict('records')

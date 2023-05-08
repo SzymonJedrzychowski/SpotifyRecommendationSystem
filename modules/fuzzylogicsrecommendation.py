@@ -18,7 +18,7 @@ class FuzzyLogicsRecommendation:
 			sampleHash = self.agent.checkHash(row)
 			if sampleHash not in toGet:
 				toGet[sampleHash] = 0
-			toGet[sampleHash] += 3
+			toGet[sampleHash] += 5
 
 		data = []
 		for (hash, number) in toGet.items():

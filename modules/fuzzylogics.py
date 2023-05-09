@@ -1,62 +1,90 @@
 from modules.fuzzylogicsrule import FuzzyLogicsRule
 
+
 class FuzzyLogics:
-	def __init__(self):
-		self.rules = {}
-		self.createRules()
+    """ Responsible for handling the Fuzzy Logics.
 
-	def createRules(self):
-		ruleDanceability = FuzzyLogicsRule()
-		ruleDanceability.addOption(0, 0, 0.3, 0.5, "low")
-		ruleDanceability.addOption(0.4, 0.5, 0.55, 0.65, "medium")
-		ruleDanceability.addOption(0.55, 0.7, 1, 1, "high")
+    """
 
-		ruleEnergy = FuzzyLogicsRule()
-		ruleEnergy.addOption(0, 0, 0.3, 0.5, "low")
-		ruleEnergy.addOption(0.2, 0.4, 0.6, 0.8, "medium")
-		ruleEnergy.addOption(0.6, 0.7, 1, 1, "high")
+    def __init__(self):
+        self.rules = {}
 
-		ruleAcousticness = FuzzyLogicsRule()
-		ruleAcousticness.addOption(0, 0, 0.05, 0.15, "low")
-		ruleAcousticness.addOption(0.1, 0.25, 0.5, 0.7, "medium")
-		ruleAcousticness.addOption(0.5, 0.7, 1, 1, "high")
+        # Create rules.
+        ruleDanceability = FuzzyLogicsRule()
+        ruleDanceability.addOption(0, 0, 0.3, 0.5, "low")
+        ruleDanceability.addOption(0.4, 0.5, 0.55, 0.65, "medium")
+        ruleDanceability.addOption(0.55, 0.7, 1, 1, "high")
 
-		ruleInstrumentalness = FuzzyLogicsRule()
-		ruleInstrumentalness.addOption(0, 0, 0.05, 0.25, "low")
-		ruleInstrumentalness.addOption(0, 0.25, 1, 1, "high")
+        ruleEnergy = FuzzyLogicsRule()
+        ruleEnergy.addOption(0, 0, 0.3, 0.5, "low")
+        ruleEnergy.addOption(0.2, 0.4, 0.6, 0.8, "medium")
+        ruleEnergy.addOption(0.6, 0.7, 1, 1, "high")
 
-		ruleTempo = FuzzyLogicsRule()
-		ruleTempo.addOption(0, 0, 0.25, 0.4, "low")
-		ruleTempo.addOption(0.25, 0.4, 0.5, 0.6, "medium")
-		ruleTempo.addOption(0.5, 0.6, 1, 1, "high")
+        ruleAcousticness = FuzzyLogicsRule()
+        ruleAcousticness.addOption(0, 0, 0.05, 0.15, "low")
+        ruleAcousticness.addOption(0.1, 0.25, 0.5, 0.7, "medium")
+        ruleAcousticness.addOption(0.5, 0.7, 1, 1, "high")
 
-		self.addRule(ruleDanceability, 'danceability')
-		self.addRule(ruleEnergy, 'energy')
-		self.addRule(ruleAcousticness, 'acousticness')
-		self.addRule(ruleInstrumentalness, 'instrumentalness')
-		self.addRule(ruleTempo, 'tempo')
+        ruleInstrumentalness = FuzzyLogicsRule()
+        ruleInstrumentalness.addOption(0, 0, 0.05, 0.25, "low")
+        ruleInstrumentalness.addOption(0, 0.25, 1, 1, "high")
 
-	def addRule(self, rule, name):
-		self.rules[name] = rule
+        ruleTempo = FuzzyLogicsRule()
+        ruleTempo.addOption(0, 0, 0.25, 0.4, "low")
+        ruleTempo.addOption(0.25, 0.4, 0.5, 0.6, "medium")
+        ruleTempo.addOption(0.5, 0.6, 1, 1, "high")
 
-	def checkRules(self, x):
-		return {name: rule.checkOptions(x[name]) for (name, rule) in self.rules.items()}
+        # Add rules.
+        self.addRule(ruleDanceability, 'danceability')
+        self.addRule(ruleEnergy, 'energy')
+        self.addRule(ruleAcousticness, 'acousticness')
+        self.addRule(ruleInstrumentalness, 'instrumentalness')
+        self.addRule(ruleTempo, 'tempo')
 
-	def checkRulesNumeric(self, x):
-		hashValues = {
-			"low": 0,
-			"medium": 1,
-			"high": 2
-		}
-		results = self.checkRules(x)
+    def addRule(self, rule: object, name: str):
+        """ Add rule to the ruleset.
 
-		return [hashValues[i] for i in results.values()]
+        :param rule: FuzzyLogicsRule object.
+        :param name: name of the rule.
+        """
 
-	def checkHash(self, x):
-		results = self.checkRulesNumeric(x)
-		hash = 0
+        self.rules[name] = rule
 
-		for (index, score) in enumerate(results):
-			hash += (3**index)*score
+    def checkRules(self, values: dict) -> dict:
+        """ Check all rules for given item (song).
 
-		return hash
+        :param values: values of the song features.
+        :return: dictionary with values for each Rule. 
+        """
+
+        return {
+            name: rule.checkOptions(values[name])
+            for (name, rule) in self.rules.items()
+        }
+
+    def checkRulesNumeric(self, values: dict) -> list:
+        """ Check all rules for given item (song) returning numeric values.
+
+        :param values: values of the song features.
+        :return: array of numeric values for each Rule.
+        """
+
+        hashValues = {"low": 0, "medium": 1, "high": 2}
+        results = self.checkRules(values)
+
+        return [hashValues[i] for i in results.values()]
+
+    def checkHash(self, values: dict) -> int:
+        """ Check hash for given results of rules.
+
+        :param values: values of the song features.
+        :return: hash code of specific song style.
+        """
+
+        results = self.checkRulesNumeric(values)
+        hashValue = 0
+
+        for (index, score) in enumerate(results):
+            hashValue += (3**index) * score
+
+        return hashValue

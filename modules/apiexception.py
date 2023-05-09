@@ -1,3 +1,7 @@
 class APIException(Exception):
-	def __init__(self, message):
-		super().__init__(self, message)
+    """ Custom exception for the API errors.
+
+    """
+
+    def __init__(self, message: str):
+        super().__init__(self, message)

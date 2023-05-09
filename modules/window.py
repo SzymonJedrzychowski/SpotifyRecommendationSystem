@@ -28,10 +28,10 @@ class Window(QMainWindow):
 		self.setWindowIcon(QIcon("resources/music.png"))
 
 		self.suggestions = []
-		self.playlistData = {"songs": [], "features": None}
+		self.playlistData = {"songs": [], "features": []}
 		self.songsID = {}
 		self.playlistAverages = {"danceability": 0, "energy": 0, "acousticness": 0, "instrumentalness": 0, "tempo": 0}
-		self.spotifySuggestions = {"songs": [], "features": None}
+		self.spotifySuggestions = {"songs": [], "features": []}
 
 		self.fuzzyRecommendation = FuzzyLogicsRecommendation(FuzzyLogics())
 		self.networkRecommendation = NeuralNetworkRecommendation()
@@ -174,6 +174,10 @@ class Window(QMainWindow):
 				i += 1
 			self.suggestionButton.setEnabled(True)
 			self.messageSignal.emit("Success", f"Playlist {dataResults['name']} was loaded.")
+
+			for i in range(self.playlistData["features"].count(None)):
+				self.playlistData["features"].remove(None)
+				
 		except APIException as E:
 			self.messageSignal.emit("Error", "This playlist is empty.")
 		except Exception as E:

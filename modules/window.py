@@ -11,7 +11,7 @@ from threading import Thread
 import json
 from copy import deepcopy
 
-from modules.fuzzy import FuzzyLogic
+from modules.fuzzylogic import FuzzyLogic
 from modules.apiexception import APIException
 from modules.fuzzylogicrecommendation import FuzzyLogicRecommendation
 from modules.neuralnetworkrecommendation import NeuralNetworkRecommendation

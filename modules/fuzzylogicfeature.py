@@ -1,13 +1,13 @@
-class FuzzyLogicRule:
-    """ Creates singular Fuzzy Logic Rule.
+class FuzzyLogicFeature:
+    """ Creates singular Fuzzy Logic for one feature.
 
     """
 
     def __init__(self):
-        self.options = {}
+        self.functions = {}
 
-    def addOption(self, x1: float, x2: float, x3: float, x4: float, name: str):
-        """ Adding option (trapezoidal membership function) to given rule.
+    def addFunction(self, x1: float, x2: float, x3: float, x4: float, name: str):
+        """ Adding function (trapezoidal membership function) to given feature.
 
         :param x1: x from where function starts to grow (y = 0).
         :param x2: x where function stops growing (y = 1).
@@ -15,17 +15,17 @@ class FuzzyLogicRule:
         :param x4: x where function stops decreasing (y = 0).
         """
 
-        self.options[name] = (x1, x2, x3, x4)
+        self.functions[name] = (x1, x2, x3, x4)
 
-    def checkOption(self, x: float, name: str) -> float:
+    def checkFunction(self, x: float, name: str) -> float:
         """ Check value for selected membership function. 
 
         :param x: value of x to check.
         :param name: name of membership function to check.
-        :return: value for given option.
+        :return: value for given membership function.
         """
 
-        p = self.options[name]
+        p = self.functions[name]
 
         if x < p[0]:
             return 0.0
@@ -44,12 +44,12 @@ class FuzzyLogicRule:
 
         return 0.0
 
-    def checkOptions(self, x: float) -> str:
+    def checkFunctions(self, x: float) -> str:
         """ Check values for all membership functions. 
 
         :param x: value of x to check.
         :return: name of the chosen membership function.
         """
 
-        results = {i: self.checkOption(x, i) for i in self.options}
+        results = {i: self.checkFunction(x, i) for i in self.functions}
         return max(results, key=results.get)

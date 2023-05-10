@@ -1,8 +1,8 @@
-from modules.fuzzylogicsrule import FuzzyLogicsRule
+from modules.fuzzylogicrule import FuzzyLogicRule
 
 
-class FuzzyLogics:
-    """ Responsible for handling the Fuzzy Logics.
+class FuzzyLogic:
+    """ Responsible for handling the Fuzzy Logic.
 
     """
 
@@ -10,26 +10,26 @@ class FuzzyLogics:
         self.rules = {}
 
         # Create rules.
-        ruleDanceability = FuzzyLogicsRule()
+        ruleDanceability = FuzzyLogicRule()
         ruleDanceability.addOption(0, 0, 0.3, 0.5, "low")
         ruleDanceability.addOption(0.4, 0.5, 0.55, 0.65, "medium")
         ruleDanceability.addOption(0.55, 0.7, 1, 1, "high")
 
-        ruleEnergy = FuzzyLogicsRule()
+        ruleEnergy = FuzzyLogicRule()
         ruleEnergy.addOption(0, 0, 0.3, 0.5, "low")
         ruleEnergy.addOption(0.2, 0.4, 0.6, 0.8, "medium")
         ruleEnergy.addOption(0.6, 0.7, 1, 1, "high")
 
-        ruleAcousticness = FuzzyLogicsRule()
+        ruleAcousticness = FuzzyLogicRule()
         ruleAcousticness.addOption(0, 0, 0.05, 0.15, "low")
         ruleAcousticness.addOption(0.1, 0.25, 0.5, 0.7, "medium")
         ruleAcousticness.addOption(0.5, 0.7, 1, 1, "high")
 
-        ruleInstrumentalness = FuzzyLogicsRule()
+        ruleInstrumentalness = FuzzyLogicRule()
         ruleInstrumentalness.addOption(0, 0, 0.05, 0.25, "low")
         ruleInstrumentalness.addOption(0, 0.25, 1, 1, "high")
 
-        ruleTempo = FuzzyLogicsRule()
+        ruleTempo = FuzzyLogicRule()
         ruleTempo.addOption(0, 0, 0.25, 0.4, "low")
         ruleTempo.addOption(0.25, 0.4, 0.5, 0.6, "medium")
         ruleTempo.addOption(0.5, 0.6, 1, 1, "high")
@@ -44,7 +44,7 @@ class FuzzyLogics:
     def addRule(self, rule: object, name: str):
         """ Add rule to the ruleset.
 
-        :param rule: FuzzyLogicsRule object.
+        :param rule: FuzzyLogicRule object.
         :param name: name of the rule.
         """
 

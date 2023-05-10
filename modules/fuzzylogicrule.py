@@ -1,4 +1,4 @@
-class FuzzyLogicsRule:
+class FuzzyLogicRule:
     """ Creates singular Fuzzy Logic Rule.
 
     """

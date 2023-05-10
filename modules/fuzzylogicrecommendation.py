@@ -1,8 +1,8 @@
 from random import sample
 
 
-class FuzzyLogicsRecommendation:
-    """ Recommends the songs based on the Fuzzy Logics system.
+class FuzzyLogicRecommendation:
+    """ Recommends the songs based on the Fuzzy Logic system.
 
     """
 

@@ -11,9 +11,9 @@ from threading import Thread
 import json
 from copy import deepcopy
 
-from modules.fuzzylogics import FuzzyLogics
+from modules.fuzzy import FuzzyLogic
 from modules.apiexception import APIException
-from modules.fuzzylogicsrecommendation import FuzzyLogicsRecommendation
+from modules.fuzzylogicrecommendation import FuzzyLogicRecommendation
 from modules.neuralnetworkrecommendation import NeuralNetworkRecommendation
 
 
@@ -46,7 +46,7 @@ class Window(QMainWindow):
         self.playlistAverages = {}
         self.playlistStd = {}
 
-        self.fuzzyRecommendation = FuzzyLogicsRecommendation(FuzzyLogics())
+        self.fuzzyRecommendation = FuzzyLogicRecommendation(FuzzyLogic())
 
         self.signal.connect(self.updateTable)
         self.messageSignal.connect(self.updateMessage)
@@ -271,7 +271,7 @@ class Window(QMainWindow):
         thread.start()
 
     def suggestSongs(self):
-        """  Suggests the song by combining Neural Network and Fuzzy Logics recommendation systems.
+        """  Suggests the song by combining Neural Network and Fuzzy Logic recommendation systems.
 
         """
 
@@ -306,7 +306,7 @@ class Window(QMainWindow):
             AISuggestionSet = set(AISuggestion)
             fuzzySuggestionProcessed = []
 
-            # Approve the songs that had the highest result from Neural Network and were suggested by the Fuzzy Logics.
+            # Approve the songs that had the highest result from Neural Network and were suggested by the Fuzzy Logic.
             for i in resultsTogether:
                 if i[1] in fuzzySuggestionSet:
                     fuzzySuggestionProcessed.append(i[1])
@@ -321,7 +321,7 @@ class Window(QMainWindow):
             numberFromFuzzy = len(fuzzySuggestionProcessed)
             fullSuggestion.extend(fuzzySuggestionProcessed)
 
-            # Approve the songs that had the highest result from Neural Network and were not suggested by the Fuzzy Logics (so that there is 10 songs in total).
+            # Approve the songs that had the highest result from Neural Network and were not suggested by the Fuzzy Logic (so that there is 10 songs in total).
             AISuggestionCopy = [i for i in deepcopy(
                 AISuggestion[0:10]) if i not in fullSuggestion]
             fullSuggestion.extend(AISuggestionCopy[:10-numberFromFuzzy])

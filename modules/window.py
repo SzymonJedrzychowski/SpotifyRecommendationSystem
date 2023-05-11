@@ -301,31 +301,28 @@ class Window(QMainWindow):
                 self.playlistData["features"])
             fuzzySuggestionSet = set(fuzzySuggestion)
 
-            # Get AI recommendation
-            AISuggestion, resultsTogether = self.networkRecommendation.predict(
-                self.playlistAverages, self.playlistStd, self.spotifySuggestions["features"], 10)
-            AISuggestionSet = set(AISuggestion)
-            fuzzySuggestionProcessed = []
-
-            # Approve the songs that had the highest result from Neural Network and were suggested by the Fuzzy Logic.
-            for i in resultsTogether:
-                if i[1] in fuzzySuggestionSet:
-                    fuzzySuggestionProcessed.append(i[1])
-
-                # Get max of 5 recommendations.
-                if len(fuzzySuggestionProcessed) == 5:
-                    break
-
+            # Get NN recommendation
+            NNSuggestion, NNResults = self.networkRecommendation.predict(
+                self.playlistAverages, self.playlistStd, self.spotifySuggestions["features"])
+            NNSuggestionSet = set(NNSuggestion)
             fullSuggestion = []
 
+            # Approve the songs that had the highest result from Neural Network and were suggested by the Fuzzy Logic.
+            for song in NNResults:
+                if song[1] in fuzzySuggestionSet:
+                    fullSuggestion.append(song[1])
+
+                # Get max of 5 recommendations.
+                if len(fullSuggestion) == 5:
+                    break
+
             # Get the number of recommended songs and add them to the full list.
-            numberFromFuzzy = len(fuzzySuggestionProcessed)
-            fullSuggestion.extend(fuzzySuggestionProcessed)
+            numberFromFuzzy = len(fullSuggestion)
 
             # Approve the songs that had the highest result from Neural Network and were not suggested by the Fuzzy Logic (so that there is 10 songs in total).
-            AISuggestionCopy = [i for i in deepcopy(
-                AISuggestion[0:10]) if i not in fullSuggestion]
-            fullSuggestion.extend(AISuggestionCopy[:10-numberFromFuzzy])
+            NNSuggestionCopy = [i for i in deepcopy(
+                NNSuggestion[0:10]) if i not in fullSuggestion]
+            fullSuggestion.extend(NNSuggestionCopy[:10-numberFromFuzzy])
 
             # Append the data of the songs.
             for i in fullSuggestion:

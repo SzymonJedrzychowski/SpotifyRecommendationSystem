@@ -11,13 +11,12 @@ class NeuralNetworkRecommendation:
         # Load the model.
         self.model = keras.models.load_model('data/model')
 
-    def predict(self, averages: dict, std: dict, suggestions: list, count: int) -> tuple:
+    def predict(self, averages: dict, std: dict, suggestions: list) -> tuple:
         """ Predict fitting values for songs.
 
         :param averages: averages of features of the playlist.
         :param std: standard deviation of features of the playlist.
         :param suggestions: list with songs to predict from.
-        :param count: number of best songs to select.
         :return: list of recommended songs AND list of predicted values with indexes 
         """
 
@@ -33,7 +32,7 @@ class NeuralNetworkRecommendation:
         resultsTogether = sorted(resultsTogether, reverse=True)
 
         # Get recommendations.
-        recommendations = [i[1] for i in resultsTogether[0:count]]
+        recommendations = [i[1] for i in resultsTogether[0:10]]
 
         return recommendations, resultsTogether
 

@@ -137,17 +137,6 @@ class Window(QMainWindow):
         self.model.setHorizontalHeaderLabels(
             ["Song title", "Artists", "Song link"])
 
-        # Create model for song table.
-        for i, j in enumerate(self.suggestions):
-            songTitle = QStandardItem(j[0])
-            songTitle.setToolTip(j[0])
-            artists = QStandardItem(j[1])
-            artists.setToolTip(j[1])
-            link = QStandardItem(j[2])
-            self.model.setItem(i, 0, songTitle)
-            self.model.setItem(i, 1, artists)
-            self.model.setItem(i, 2, link)
-
         self.tableView.setModel(self.model)
         self.tableView.doubleClicked.connect(self.openLink)
 
@@ -170,6 +159,7 @@ class Window(QMainWindow):
         try:
             if (title == "Success"):
                 messageBox.setWindowIcon(QIcon("resources/check.png"))
+                self.resetTable()
             else:
                 messageBox.setWindowIcon(QIcon("resources/error.png"))
         except:
@@ -192,6 +182,17 @@ class Window(QMainWindow):
             self.model.setItem(i, 0, songTitle)
             self.model.setItem(i, 1, artists)
             self.model.setItem(i, 2, link)
+
+    def resetTable(self):
+        """ Reset the table with recommendations.
+
+        """
+
+        self.model = QStandardItemModel()
+        self.model.setHorizontalHeaderLabels(
+            ["Song title", "Artists", "Song link"])
+
+        self.tableView.setModel(self.model)
 
     def runLoadPlaylist(self):
         """ Run separate thread for loading playlist.
